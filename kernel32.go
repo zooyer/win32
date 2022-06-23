@@ -13,6 +13,7 @@ var (
 	SE_DEBUG_NAME    = windows.StringToUTF16Ptr("SeDebugPrivilege")
 )
 
+// readProcessMemory 读取内存数据到缓冲区
 func readProcessMemory(handle windows.Handle, baseAddress uintptr, buf unsafe.Pointer, size int) (n uint, err error) {
 	if err = windows.ReadProcessMemory(handle, baseAddress, (*byte)(buf), uintptr(size), (*uintptr)(unsafe.Pointer(&n))); err != nil {
 		return
@@ -21,10 +22,12 @@ func readProcessMemory(handle windows.Handle, baseAddress uintptr, buf unsafe.Po
 	return
 }
 
+// ReadProcessMemory 读取内存数据到缓冲区
 func ReadProcessMemory(handle windows.Handle, baseAddress uintptr, buf []byte) (n uint, err error) {
 	return readProcessMemory(handle, baseAddress, unsafe.Pointer(&buf[0]), len(buf))
 }
 
+// ReadProcessMemoryData 读取内存数据到变量
 func ReadProcessMemoryData[T any](handle windows.Handle, baseAddress uintptr) (val T, err error) {
 	if _, err = readProcessMemory(handle, baseAddress, unsafe.Pointer(&val), int(unsafe.Sizeof(val))); err != nil {
 		return
@@ -33,6 +36,7 @@ func ReadProcessMemoryData[T any](handle windows.Handle, baseAddress uintptr) (v
 	return
 }
 
+// ReadProcessMemoryCStringA 读取内存数据为ASCII字符串
 func ReadProcessMemoryCStringA(handle windows.Handle, baseAddress uintptr) (str string, err error) {
 	var utf8 = make([]byte, 0, 128)
 	ptr, err := ReadProcessMemoryData[uintptr](handle, baseAddress)
@@ -58,6 +62,7 @@ func ReadProcessMemoryCStringA(handle windows.Handle, baseAddress uintptr) (str 
 	return string(utf8), nil
 }
 
+// ReadProcessMemoryCStringW 读取内存数据为Unicode字符串
 func ReadProcessMemoryCStringW(handle windows.Handle, baseAddress uintptr) (str string, err error) {
 	var utf16 = make([]uint16, 0, 128)
 	ptr, err := ReadProcessMemoryData[uintptr](handle, baseAddress)
@@ -83,6 +88,7 @@ func ReadProcessMemoryCStringW(handle windows.Handle, baseAddress uintptr) (str 
 	return windows.UTF16ToString(utf16), nil
 }
 
+// EnablePrivilege 进程开启特权模式
 func EnablePrivilege() (err error) {
 	var (
 		tkp   windows.Tokenprivileges
