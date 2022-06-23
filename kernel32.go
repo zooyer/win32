@@ -99,6 +99,8 @@ func EnablePrivilege() (err error) {
 		return
 	}
 
+	defer token.Close()
+
 	if err = windows.LookupPrivilegeValue(nil, SE_DEBUG_NAME, &tkp.Privileges[0].Luid); err != nil {
 		return
 	}
@@ -106,7 +108,7 @@ func EnablePrivilege() (err error) {
 	tkp.PrivilegeCount = 1
 	tkp.Privileges[0].Attributes = windows.SE_PRIVILEGE_ENABLED
 
-	if err = windows.AdjustTokenPrivileges(token, false, &tkp, 0, nil, nil); err != nil {
+	if err = windows.AdjustTokenPrivileges(token, false, &tkp, uint32(unsafe.Sizeof(tkp)), nil, nil); err != nil {
 		return
 	}
 
