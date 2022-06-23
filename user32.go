@@ -84,8 +84,8 @@ func GetWindowThreadProcessID(hwnd windows.HWND) (tid, pid uint32, err error) {
 	return
 }
 
-// GetWindowHandleByPID 获取进程窗口句柄
-func GetWindowHandleByPID(pid uint32) (hwnds []windows.HWND) {
+// GetWindowHwndByPID 获取进程窗口句柄
+func GetWindowHwndByPID(pid uint32) (hwnds []windows.HWND) {
 	_ = EnumWindows(func(hwnd windows.HWND, args uintptr) bool {
 		var (
 			err error

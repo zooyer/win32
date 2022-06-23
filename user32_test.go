@@ -46,14 +46,14 @@ func TestGetWindowThreadProcessID(t *testing.T) {
 	}
 }
 
-func TestGetWindowHandleByPID(t *testing.T) {
+func TestGetWindowHwndByPID(t *testing.T) {
 	pid, err := GetProcessIDByName("explorer.exe")
 	if err != nil {
 		t.Fatal(err)
 	}
 
 	for _, pid := range pid {
-		hwnd := GetWindowHandleByPID(pid)
+		hwnd := GetWindowHwndByPID(pid)
 		t.Log(hwnd)
 	}
 }
